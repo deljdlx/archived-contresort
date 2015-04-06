@@ -8,10 +8,56 @@ define('APPLICATION_FILEPATH', getcwd());
 
 require('bootstrap.php');
 
-require(CONTRSORT_FILEPATH.'/bootstrap.php');
+require(CONTRESORT_FILEPATH.'/bootstrap.php');
+
+
+function getNavigationBar($application) {
+
+	$anchors=array(
+		'urlindex'=>$application->getURL('index'),
+		'urlapropos'=>$application->getURL('apropos'),
+	);
+
+	$buffer=obinclude('template/block/navigationbar.php', $anchors);
+	return $buffer;
+}
+
 
 
 $application=new \ContreSort\Application('Demo');
+
+$application->get('`\?/apropos`')
+	->execute(function() {
+
+		$this->output=obinclude('template/layout/default.php', array(
+			'navigationBar'=>getNavigationBar($this),
+			'content'=>obinclude('template/page/apropos.php')
+		));
+
+	})->execute(function() {
+		$this->addHeader('Content-type', 'text/html; charset="utf-8"');
+	})->name('apropos')
+	->builder(function() {
+		return '?/apropos';
+	})
+;
+
+
+
+$application->get('`.*`')
+	->execute(function() {
+		$this->output=obinclude('template/layout/default.php', array(
+			'navigationBar'=>getNavigationBar($this),
+			'content'=>obinclude('template/page/index.php')
+		));
+	})->execute(function() {
+		$this->addHeader('Content-type', 'text/html; charset="utf-8"');
+	})->name('index')
+	->builder('?');
+
+
+
+
 
 
 /*
@@ -24,7 +70,7 @@ $application->get(function() {
 */
 
 
-
+/*
 $application->cli('`.*`', function() {
 	return 'hello cli';
 });
@@ -54,6 +100,7 @@ $application->get('`hello(?:/(?P<name>.*?)/(.*?)/(?P<phrase>.*))?`', function($n
 	return 'hello '.$name.' '.$phrase;
 });
 
+*/
 
 
 

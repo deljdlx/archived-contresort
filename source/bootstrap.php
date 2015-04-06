@@ -1,10 +1,17 @@
 <?php
 
-namespace Contresort;
+//namespace Contresort;
 
 
-function CSinclude($filepath) {
+function CSinclude($filepath, $variables=array()) {
+	extract($variables);
 	include($filepath);
+}
+
+function obinclude($filepath, $variables=array()) {
+	ob_start();
+	CSinclude($filepath, $variables);
+	return ob_get_clean();
 }
 
 
@@ -18,9 +25,9 @@ spl_autoload_register(function($className) {
 		foreach ($iterator as $file) {
 
 			if(strrpos($file, '.php')) {
-				$index=str_ireplace('\CORE\\',
+				$index=str_ireplace('\core\\',
 					'\\',
-					strtoupper(str_replace('/', '\\', __NAMESPACE__.'\\'.preg_replace('`.*?core.(.*?)\.php`', '$1', (string) $file)))
+					strtoupper(str_replace('/', '\\', 'Contresort\\'.preg_replace('`.*?core.(.*?)\.php`', '$1', (string) $file)))
 				);
 				$classIndex[$index]=(string) $file;
 			}
@@ -30,7 +37,7 @@ spl_autoload_register(function($className) {
 	$normalizedClassName=strtoupper($className);
 
 	if(isset($classIndex[$normalizedClassName])) {
-		include($classIndex[$normalizedClassName]);
+		CSinclude($classIndex[$normalizedClassName]);
 		return $classIndex[$normalizedClassName];
 	}
 	return false;

@@ -9,7 +9,9 @@ class Application
 {
 
 	protected $filepath;
+
 	protected $routingRules=array();
+	protected $routingRulesByName=array();
 
 	protected $output='';
 
@@ -24,8 +26,18 @@ class Application
 		}
 		$this->filepath=$filepath;
 
+		$this->loadEnvironment();
 
-		$this->environment=new Environment();
+	}
+
+	public function loadEnvironment($environment=null) {
+		if($environment===null) {
+			$this->environment = new Environment();
+		}
+		else {
+			$this->environment = $environment;
+		}
+		return $this;
 	}
 
 
@@ -35,56 +47,80 @@ class Application
 		return $this->environment;
 	}
 
-	public function get($validator, $action=null, $name=null) {
-		$descriptor=new Descriptor(
-			'get',
-			new Rule($validator),
-			$action
-		);
-		$this->addRouteDescriptor($descriptor, $name);
-
-		return $descriptor;
-	}
 
 
-	public function post($validator, $action=null, $name=null) {
-		$descriptor=new Descriptor(
-			'post',
-			new Rule($validator),
-			$action
-		);
-		$this->addRouteDescriptor($descriptor, $name);
+	public function getURL($name, $parameters=array()) {
+		if(isset($this->routingRulesByName[$name])) {
 
-		return $descriptor;
-	}
-
-	public function cli($validator, $action=null, $name=null) {
-		$descriptor=new Descriptor(
-			'cli',
-			new Rule($validator),
-			$action
-		);
-		$this->addRouteDescriptor($descriptor, $name);
-
-		return $descriptor;
-	}
-
-
-
-	public function addRouteDescriptor($descriptor, $name=null) {
-		if($name===null) {
-			$this->routingRules[]=$descriptor;
+			$descriptor=$this->routingRulesByName[$name];
+			$url=$descriptor->buildURL($parameters);
+			return $url;
 		}
 		else {
-			$this->routingRules[$name]=$descriptor;
+			return false;
 		}
+	}
 
+
+
+	public function createRouteDescriptor($method, $validator) {
+		$descriptor=new Descriptor(
+			$method,
+			new Rule($validator)
+		);
+
+		return $descriptor;
+	}
+
+
+	public function addRouteDescriptor($descriptor) {
+		$this->routingRules[]=$descriptor;
 		return $this;
 	}
 
+
+	public function route($method, $validator) {
+		$descriptor=$this->createRouteDescriptor($method, $validator);
+		$this->addRouteDescriptor($descriptor);
+		return $descriptor;
+	}
+
+
+
+
+	public function get($validator) {
+		return $this->route('get', $validator);
+	}
+
+
+	public function post($validator) {
+		return $this->route('post', $validator);
+	}
+
+	public function cli($validator) {
+		return $this->route('cli', $validator);
+	}
+
+
+	public  function mapRoutingRules() {
+		foreach ($this->routingRules as $index=>$descriptor) {
+			if($name=$descriptor->name()) {
+				$this->routingRulesByName[$descriptor->name()] = $descriptor;
+			}
+			else {
+				$this->routingRulesByName[$index] = $descriptor;
+			}
+		}
+		return $this;
+	}
+
+
 	public function run() {
-		foreach ($this->routingRules as $name=>$descriptor) {
-			$result=$descriptor->execute($this);
+
+		$this->mapRoutingRules();
+
+		foreach ($this->routingRules as $descriptor) {
+			$result=$descriptor->run($this);
 			if($result!==false) {
 				break;
 			}
