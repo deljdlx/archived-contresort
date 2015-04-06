@@ -22,12 +22,25 @@ class Application extends Extension
 
 	protected $headers=array();
 
+	protected $exitActions=array();
+	protected $postActions=array();
+	protected $preActions=array();
+
+
 	public function __construct($namespace, $filepath=null) {
 		if($filepath===null) {
 			$filepath=$this->findFilepathRoot();
 		}
 		parent::__construct($namespace, $filepath);
 		$this->loadEnvironment();
+
+
+		$this->addPostAction(function() {
+			if($this->getEnvironment()->getMethod()!='cli') {
+				$this->sendHeaders();
+			}
+		});
+
 	}
 
 	public function loadEnvironment($environment=null) {
@@ -41,8 +54,6 @@ class Application extends Extension
 	}
 
 
-
-
 	public function getEnvironment() {
 		return $this->environment;
 	}
@@ -50,69 +61,65 @@ class Application extends Extension
 
 
 
+	//routing=========================================================
+	public function buildURL($name, $parameters = array()) {
+		if (isset($this->routingRulesByName[$name])) {
 
-	public function getURL($name, $parameters=array()) {
-		if(isset($this->routingRulesByName[$name])) {
-
-			$descriptor=$this->routingRulesByName[$name];
-			$url=$descriptor->buildURL($parameters);
+			$descriptor = $this->routingRulesByName[$name];
+			$url = $descriptor->buildURL($parameters);
 			return $url;
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
 
-
-
 	public function createRouteDescriptor($method, $validator) {
-		$descriptor=new Descriptor(
+		$descriptor = new Descriptor(
 			new Rule($method, $validator)
 		);
-
 		return $descriptor;
 	}
 
-
 	public function addRouteDescriptor($descriptor) {
-		$this->routingRules[]=$descriptor;
+		$this->routingRules[] = $descriptor;
 		return $this;
 	}
 
-
-	public function route($method, $validator) {
-		$descriptor=$this->createRouteDescriptor($method, $validator);
+	public function createRoute($method, $validator) {
+		$descriptor = $this->createRouteDescriptor($method, $validator);
 		$this->addRouteDescriptor($descriptor);
 		return $descriptor;
 	}
 
-
-
-
 	public function get($validator) {
-		return $this->route('get', $validator);
+		return $this->createRoute('get', $validator);
 	}
 
-
 	public function post($validator) {
-		return $this->route('post', $validator);
+		return $this->createRoute('post', $validator);
 	}
 
 	public function cli($validator) {
-		return $this->route('cli', $validator);
+		return $this->createRoute('cli', $validator);
 	}
 
-
-	public  function mapRoutingRules() {
-		foreach ($this->routingRules as $index=>$descriptor) {
-			if($name=$descriptor->name()) {
+	public function mapRoutingRules() {
+		foreach ($this->routingRules as $index => $descriptor) {
+			if ($name = $descriptor->name()) {
 				$this->routingRulesByName[$descriptor->name()] = $descriptor;
-			}
-			else {
+			} else {
 				$this->routingRulesByName[$index] = $descriptor;
 			}
 		}
 		return $this;
+	}
+
+	public function getRoute($name) {
+		if (isset($this->routingRulesByName[$name])) {
+			return $this->routingRulesByName[$name];
+		} else {
+			return false;
+		}
 	}
 
 
@@ -120,13 +127,17 @@ class Application extends Extension
 		return $this->selectedRoute;
 	}
 
+	//=======================================================
+
 
 
 	public function run() {
 		$this->mapRoutingRules();
 
-		foreach ($this->routingRules as $descriptor) {
+		$this->executeStack($this->preActions);
 
+		foreach ($this->routingRules as $descriptor) {
+			$descriptor->runBefore($this);
 			if($descriptor->isValid($this)) {
 				$descriptor->selected(true);
 				$this->selectedRoute=$descriptor;
@@ -135,12 +146,28 @@ class Application extends Extension
 			}
 		}
 
-		if($this->getEnvironment()->getMethod()!='cli') {
-			$this->sendHeaders();
+		if($this->selectedRoute) {
+			$this->selectedRoute->runAfter($this);
 		}
+
+		$this->executeStack($this->postActions);
 
 		return $this;
 	}
+
+	public function addPostAction($callback) {
+		$this->postActions[]=$callback;
+		return $this;
+	}
+	public function addPreAction($callback) {
+		$this->preActions[]=$callback;
+		return $this;
+	}
+	public function addExitAction($callback) {
+		$this->exitActions[]=$callback;
+		return $this;
+	}
+
 
 	public function addHeader($name, $value) {
 		$this->headers[$name]=$value;
@@ -149,6 +176,28 @@ class Application extends Extension
 	public function sendHeaders() {
 		foreach ($this->headers as $name => $value) {
 			header($name.': '.$value);
+		}
+		return $this;
+	}
+
+
+
+
+	public function stop() {
+		$this->executeStack($this->exitActions);
+		exit($this->getStatus());
+	}
+
+
+	public function executeStack($stack) {
+		foreach($stack as $callback) {
+			if(is_callable($callback)) {
+				$closure=$callback->bindTo($this, $this);
+				$returnValue=$closure->__invoke();
+				if(!$returnValue) {
+					break;
+				}
+			}
 		}
 		return $this;
 	}

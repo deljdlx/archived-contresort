@@ -1,8 +1,5 @@
 <?php
 
-//namespace Contresort;
-
-
 function CSinclude($filepath, $variables=array()) {
 	extract($variables);
 	include($filepath);

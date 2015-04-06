@@ -15,12 +15,12 @@ class Environment
 	public $get=array();
 	public $post=array();
 
+	public $request;
 
 
 	public function __construct() {
 
 		$mode=php_sapi_name();
-
 
 		if($mode=='cli') {
 			$this->method='cli';
@@ -30,6 +30,8 @@ class Environment
 			$this->post=$_POST;
 			$this->get=$_GET;
 			$this->cookie=$_COOKIE;
+
+			$this->loadRequest();
 		}
 
 		if(isset($_SERVER)) {
@@ -43,8 +45,21 @@ class Environment
 		if(isset($_SESSION)) {
 			$this->session=$_SESSION;
 		}
-
 	}
+
+	public function loadRequest($request=null) {
+		if(!$request) {
+			$this->request=new Request();
+		}
+		else {
+			$this->requestion=$request;
+		}
+	}
+
+	public function getRequest() {
+		return $this->request;
+	}
+
 
 	public function getMethod() {
 		return $this->method;

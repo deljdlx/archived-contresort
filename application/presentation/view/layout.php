@@ -29,12 +29,12 @@ class Layout extends \Contresort\Template
 
 	protected function getMenuLinks($application) {
 		$anchors=array(
-			'urlindex'=>$application->getURL('index'),
-			'urlapropos'=>$application->getURL('apropos'),
-			'urlmanifeste'=>$application->getURL('manifeste'),
-			'urldemarrage'=>$application->getURL('demarrage'),
-			'urlextension'=>$application->getURL('extension'),
-			'urldocumentation'=>$application->getURL('documentation'),
+			'urlindex'=>$application->buildURL('index'),
+			'urlapropos'=>$application->buildURL('apropos'),
+			'urlmanifeste'=>$application->buildURL('manifeste'),
+			'urldemarrage'=>$application->buildURL('demarrage'),
+			'urlextension'=>$application->buildURL('extension'),
+			'urldocumentation'=>$application->buildURL('documentation'),
 		);
 		return $anchors;
 	}

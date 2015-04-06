@@ -8,14 +8,15 @@ class Descriptor
 {
 	protected $name;
 	protected $rule;
+
+	protected $preActions=array();
 	protected $actions=array();
+	protected $postActions=array();
 
 
 	protected $selected=false;
 
 	protected $builder;
-
-	protected $output='';
 
 	public function __construct($rule) {
 		$this->rule=$rule;
@@ -64,8 +65,19 @@ class Descriptor
 	}
 
 
+
+	public function addPreAction($action) {
+		$this->preActions[]=$action;
+		return $this;
+	}
+
 	public function addAction($action) {
 		$this->actions[]=$action;
+		return $this;
+	}
+
+	public function addPostAction($action) {
+		$this->postActions[]=$action;
 		return $this;
 	}
 
@@ -80,21 +92,40 @@ class Descriptor
 	}
 
 	public function run($application) {
-		if($this->selected()) {
-			$parameters=$this->rule->getParameters();
-			foreach ($this->actions as $action) {
-				$closure=$action->bindTo($application, $application);
-				$this->output=call_user_func_array(array($closure, '__invoke'), $parameters);
+		$parameters=$this->rule->getParameters();
+		foreach ($this->actions as $action) {
+			$closure=$action->bindTo($application, $application);
+			$result=call_user_func_array(array($closure, '__invoke'), $parameters);
+			if(!$result) {
+				break;
 			}
-			return true;
 		}
-		else {
-			return false;
-		}
+		return $this;
 	}
 
-	public function getOutput() {
-		return $this->output;
+	public function runAfter($application) {
+		$parameters=$this->rule->getParameters();
+		foreach ($this->postActions as $action) {
+			$closure=$action->bindTo($application, $application);
+			$result=call_user_func_array(array($closure, '__invoke'), $parameters);
+			if(!$result) {
+				break;
+			}
+		}
+		return $this;
 	}
+
+	public function runBefore($application) {
+
+		foreach ($this->preActions as $action) {
+			$closure=$action->bindTo($application, $application);
+			$result=call_user_func_array(array($closure, '__invoke'), array());
+			if(!$result) {
+				break;
+			}
+		}
+		return $this;
+	}
+
 
 }

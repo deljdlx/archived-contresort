@@ -21,64 +21,77 @@ function getPage($page, $application) {
 
 
 
+$test=new Contresort\Request();
 
 
 $application=new \ContreSort\Application('Contresort\Presentation');
 $application->addHeader('Content-type', 'text/html; charset="utf-8"');
+//$application->addHeader('Etag', md5('fohosg'));
 
-$application->get('`\?/apropos`')
+
+$application->addExitAction(function() {
+	//echo $this->getEnvironment()->getURL().' => '.$this->getStatus();
+});
+
+
+$application->get('`\?/apropos`')->name('apropos')
+	->addAction(function() {
+		//$this->getEnvironment()->getRequest();
+		return true;
+	})
 	->addAction(function() {
 		$this->output=getPage('apropos.php', $this);
+		return true;
 	})
-	->name('apropos')
 	->builder('?/apropos')
 ;
 
-$application->get('`\?/manifeste`')
+$application->get('`\?/manifeste`')->name('manifeste')
 	->addAction(function() {
 		$this->output=getPage('manifeste.php', $this);
+		return true;
 	})
-	->name('manifeste')
 	->builder(function() {
 		return '?/manifeste';
 	})
 ;
 
-$application->get('`\?/documentation`')
+$application->get('`\?/documentation`')->name('documentation')
 	->addAction(function() {
 		$this->output=getPage('documentation.php', $this);
+		return true;
 	})
-	->name('documentation')
 	->builder(function() {
 		return '?/documentation';
 	})
 ;
 
-$application->get('`\?/extension`')
+$application->get('`\?/extension`')->name('extension')
 	->addAction(function() {
 		$this->output=getPage('extension.php', $this);
+		return true;
 	})
-	->name('extension')
 	->builder(function() {
 		return '?/extension';
 	})
 ;
 
 
-$application->get('`\?/demarrage`')
+$application->get('`\?/demarrage`')->name('demarrage')
 	->addAction(function() {
 		$this->output=getPage('demarrage.php', $this);
-
+		return true;
 	})
-	->name('demarrage')
 	->builder('?/demarrage')
 ;
 
-$application->get('`.*`')
+$application->get('`.*`')->name('index')
+	->addPreAction(function() {})
+	->addPostAction(function() {})
 	->addAction(function() {
 		$this->output=getPage('index.php', $this);;
+		return true;
 	})
-	->name('index')
 	->builder('?');
 
 $application->run();
@@ -87,6 +100,6 @@ $application->run();
 echo $application->getOutput();
 
 
-exit($application->getStatus());
+$application->stop();
 
 
