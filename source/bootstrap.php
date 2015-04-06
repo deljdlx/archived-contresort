@@ -13,7 +13,7 @@ spl_autoload_register(function($className) {
 	static $classIndex;
 
 	if(!$classIndex) {
-		$dir_iterator = new \RecursiveDirectoryIterator(__DIR__.'/source/core');
+		$dir_iterator = new \RecursiveDirectoryIterator(__DIR__.'/core');
 		$iterator = new \RecursiveIteratorIterator($dir_iterator, \RecursiveIteratorIterator::SELF_FIRST);
 		foreach ($iterator as $file) {
 

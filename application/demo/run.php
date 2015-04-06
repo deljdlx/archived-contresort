@@ -30,7 +30,7 @@ $application->cli('`.*`', function() {
 });
 
 
-$application->get('`.*?(?:run.php(.*))`', function() {
+$application->get('`(.*)`', function() {
 	$this->output='<form method="post" action=""><input name="test" value="post ok"/><button>ok</button></form>';
 })->also(function() {
 	$this->output.='<hr/>';
