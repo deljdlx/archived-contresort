@@ -15,6 +15,27 @@ function obinclude($filepath, $variables=array()) {
 }
 
 
+function bindParameters($values, $controller, $method) {
+
+	$reflector=new \Reflectionmethod($controller, $method);
+	$parameters=array();
+	foreach($reflector->getParameters() as $parameter) {
+
+		if(isset($values[$parameter->name])) {
+			$parameters[]=$values[$parameter->name];
+		}
+		else {
+			$value=null;
+			if($parameter->isOptional()) {
+				$value=$parameter->getDefaultValue();
+			}
+			$parameters[]=$value;
+		}
+	}
+	return $parameters;
+}
+
+
 spl_autoload_register(function($className) {
 
 	static $classIndex;

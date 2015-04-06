@@ -6,15 +6,37 @@ class Rule
 {
 
 	protected $validator;
+	protected $method=null;
 	protected $parameters=array();
 
 
-	public function __construct($validator) {
+	public function __construct($method, $validator) {
+		if(is_string($this->method)) {
+			$this->method=strtolower($method);
+		}
+		else {
+			$this->method=$method;
+		}
 		$this->validator=$validator;
 	}
 
+	public function getMethod() {
+		return $this->method;
+	}
 
-	public function validate($string) {
+	public function validate($application) {
+
+		$environment=$application->getEnvironment();
+
+		if($environment->getMethod()!=$this->method && $this->method!==null) {
+			return false;
+		}
+
+		$string='';
+		if($this->getMethod()!='cli') {
+			$string=$environment->getURL();
+		}
+
 		$returnValue=false;
 		if(is_string($this->validator)) {
 			$returnValue=preg_match_all($this->validator, $string, $matches);

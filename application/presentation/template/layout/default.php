@@ -7,18 +7,27 @@
 
 	<!-- Optional theme -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+
+
+
 	<link rel="icon" href="resource/favicon.png"/>
+	<link rel="stylesheet" href="resource/css/global.css"/>
+
 
 </head>
 <body>
 
-<header>
-	<?php echo $navigationBar;?>
-</header>
+
+<?=$navigationBar;?>
 
 
 
-<?php echo $content;?>
+<div style="margin-top: 50px;">
+<?=$content;?>
+</div>
+
+<?=$footer;?>
+
 
 </body>
 

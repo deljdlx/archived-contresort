@@ -8,21 +8,30 @@ class Descriptor
 {
 	protected $name;
 	protected $rule;
-	protected $method;
 	protected $actions=array();
+
+
+	protected $selected=false;
 
 	protected $builder;
 
-	public function __construct($method, $rule) {
-		if(is_string($this->method)) {
-			$this->method=strtolower($method);
-		}
-		else {
-			$this->method=$method;
-		}
+	protected $output='';
 
+	public function __construct($rule) {
 		$this->rule=$rule;
 	}
+
+
+	public function selected($value=null) {
+		if($value!==null) {
+			$this->selected=$value;
+			return $this;
+		}
+		else {
+			return $this->selected;
+		}
+	}
+
 
 	public function name($name=null) {
 		if($name!==null) {
@@ -55,42 +64,37 @@ class Descriptor
 	}
 
 
-	public function execute($action) {
+	public function addAction($action) {
 		$this->actions[]=$action;
 		return $this;
 	}
 
-	public function getMethod() {
-		return $this->method;
-	}
 
-	public function run($application) {
-		$environment=$application->getEnvironment();
-
-
-		if($environment->getMethod()!=$this->method && $this->method!==null) {
-			return false;
-		}
-
-
-		$string='';
-		if($this->getMethod()!='cli') {
-			$string=$environment->getURL();
-		}
-
-		if($this->rule->validate($string))  {
-			$parameters=$this->rule->getParameters();
-			$results=array();
-			foreach ($this->actions as $action) {
-				$closure=$action->bindTo($application, $application);
-				call_user_func_array(array($closure, '__invoke'), $parameters);
-			}
-			return $results;
+	public function isValid($application) {
+		if($this->rule->validate($application)) {
+			return true;
 		}
 		else {
 			return false;
 		}
+	}
 
+	public function run($application) {
+		if($this->selected()) {
+			$parameters=$this->rule->getParameters();
+			foreach ($this->actions as $action) {
+				$closure=$action->bindTo($application, $application);
+				$this->output=call_user_func_array(array($closure, '__invoke'), $parameters);
+			}
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	public function getOutput() {
+		return $this->output;
 	}
 
 }

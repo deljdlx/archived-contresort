@@ -5,7 +5,7 @@ namespace Contresort;
 use Contresort\Route\Descriptor;
 use Contresort\Route\Rule;
 
-class Application
+class Application extends Extension
 {
 
 	protected $filepath;
@@ -13,21 +13,21 @@ class Application
 	protected $routingRules=array();
 	protected $routingRulesByName=array();
 
+	protected $selectedRoute;
+
 	protected $output='';
 
 	protected $environment;
+	protected $status=0;
 
 	protected $headers=array();
 
 	public function __construct($namespace, $filepath=null) {
-		$this->namespace=$namespace;
 		if($filepath===null) {
 			$filepath=$this->findFilepathRoot();
 		}
-		$this->filepath=$filepath;
-
+		parent::__construct($namespace, $filepath);
 		$this->loadEnvironment();
-
 	}
 
 	public function loadEnvironment($environment=null) {
@@ -49,6 +49,8 @@ class Application
 
 
 
+
+
 	public function getURL($name, $parameters=array()) {
 		if(isset($this->routingRulesByName[$name])) {
 
@@ -65,8 +67,7 @@ class Application
 
 	public function createRouteDescriptor($method, $validator) {
 		$descriptor=new Descriptor(
-			$method,
-			new Rule($validator)
+			new Rule($method, $validator)
 		);
 
 		return $descriptor;
@@ -115,13 +116,21 @@ class Application
 	}
 
 
-	public function run() {
+	public function getSelectedRoute() {
+		return $this->selectedRoute;
+	}
 
+
+
+	public function run() {
 		$this->mapRoutingRules();
 
 		foreach ($this->routingRules as $descriptor) {
-			$result=$descriptor->run($this);
-			if($result!==false) {
+
+			if($descriptor->isValid($this)) {
+				$descriptor->selected(true);
+				$this->selectedRoute=$descriptor;
+				$descriptor->run($this);
 				break;
 			}
 		}
@@ -148,7 +157,19 @@ class Application
 	public function getOutput() {
 		return $this->output;
 	}
+	public function setOutput($string) {
+		$this->output=$string;
+		return $this;
+	}
 
+
+	public function getStatus() {
+		return $this->status;
+	}
+	public function setStatus($status) {
+		$this->status=$status;
+		return $this;
+	}
 
 
 	protected function findFilepathRoot($callstackSize=10) {
@@ -161,9 +182,11 @@ class Application
 				return str_replace('\\', '/', dirname($data['file']));
 			}
 		}
-
 		return false;
 	}
+
+
+
 
 
 }
