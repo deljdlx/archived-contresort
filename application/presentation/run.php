@@ -37,12 +37,12 @@ $application->addExitAction(function() {
 $application->get(function($application) {
 
 	if(preg_match('`apropos`', $application->getEnvironment()->getURL())) {
-		//$this->parameters['test']='hello world';
+		//$this->parameters['aString']='hello world';
 		return true;
 	}
 	return false;
 })->name('apropos')
-	->addAction(function($string) {
+	->addAction(function($aString) {
 		//echo $string;
 		//exit();
 		//$this->getEnvironment()->getRequest();
