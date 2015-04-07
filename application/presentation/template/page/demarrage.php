@@ -44,10 +44,18 @@ echo $application->getOutput();
 
 
 
-		<h2>Code de retour</h2>
+		<h2>Fin d'éxécution et code de retour</h2>
 		<p>
-			Lorsque l'execution de l'application est terminés, vous pouvez accéder a son code de retour en utilisant cette méthode  <strong>\ContreSort\Application::getStatus()</strong>
+			Lorsque l'execution de l'application est terminée, vous pouvez accéder a son code de retour en utilisant cette méthode  <strong>\ContreSort\Application::getStatus()</strong>
 		</p>
+		<p>Exemple</p>
+		<?php
+		highlight_string('<?php
+$application->stop();
+exit($application->getStatus());
+');
+		?>
+
 
 		<h2>Exemple complet</h2>
 		<?php
