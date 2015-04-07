@@ -21,7 +21,7 @@ function getPage($page, $application) {
 
 
 
-$test=new Contresort\Request();
+//$test=new Contresort\Request();
 
 
 $application=new \ContreSort\Application('Contresort\Presentation');
@@ -34,8 +34,17 @@ $application->addExitAction(function() {
 });
 
 
-$application->get('`\?/apropos`')->name('apropos')
-	->addAction(function() {
+$application->get(function($application) {
+
+	if(preg_match('`apropos`', $application->getEnvironment()->getURL())) {
+		//$this->parameters['test']='hello world';
+		return true;
+	}
+	return false;
+})->name('apropos')
+	->addAction(function($string) {
+		//echo $string;
+		//exit();
 		//$this->getEnvironment()->getRequest();
 		return true;
 	})

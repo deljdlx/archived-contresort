@@ -63,7 +63,7 @@ class Rule
 		}
 		else if(is_callable($this->validator)) {
 			$closure=$this->validator->bindTo($this, $this);
-			return $closure->__invoke();
+			return $closure->__invoke($application);
 		}
 
 		return $returnValue;
