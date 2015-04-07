@@ -79,6 +79,7 @@ $application->run();
 echo $application->getOutput();
 
 //arrêt de l\'application et renvoie de son code de retour
+$application->stop();
 exit($application->getStatus());
 ');
 
