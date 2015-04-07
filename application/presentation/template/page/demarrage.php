@@ -15,7 +15,7 @@ $application=new \ContreSort\Application("namespace_de_l_application");
 
 		<h2>Routing</h2>
 		<p>
-		Voici un exemple de route répondant "hello world" à tout les appels HTTP GET. Le paramètre à passer dans la méthode $application::get() est une regexp interprétable par les fonctions preg_*
+		Voici un exemple de route répondant "hello world" à tous les appels HTTP GET. Le paramètre à passer dans la méthode $application::get() est une regexp interprétable par les fonctions preg_*
 		</p>
 		<?php
 		highlight_string('<?php
@@ -23,6 +23,7 @@ $application=new \ContreSort\Application("namespace_de_l_application");
 $application->get("#.*#")
 	->addAction(function() {
 		$this->output="Hello world";
+		return true;
 	});
 ');
 		?>
@@ -32,7 +33,7 @@ $application->get("#.*#")
 		<h2>Buffer de sortie</h2>
 		<p>
 			Le buffer de sortie est stocké dans l'attribut $output de la classe \ContreSort\Application.<br/>
-			Pour accéder en lecture à cette variable utilisez la méthode <strong>\ContreSort\Application::getOutput()</strong>.<br/>
+			Pour accéder en lecture à cette variable, utilisez la méthode <strong>\ContreSort\Application::getOutput()</strong>.<br/>
 			Pour y accéder en écriture, utilisez la méthode <strong>\ContreSort\Application::setOutput($string)</strong>.
 		</p>
 		<p>Code pour afficher le buffer de sortie de l'application</p>
@@ -46,7 +47,7 @@ echo $application->getOutput();
 
 		<h2>Fin d'éxécution et code de retour</h2>
 		<p>
-			Lorsque l'execution de l'application est terminée, vous pouvez accéder a son code de retour en utilisant cette méthode  <strong>\ContreSort\Application::getStatus()</strong>
+			Lorsque l'execution de l'application est terminée, vous pouvez accéder à son code de retour en utilisant cette méthode  <strong>\ContreSort\Application::getStatus()</strong>
 		</p>
 		<p>Exemple</p>
 		<?php

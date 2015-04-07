@@ -15,7 +15,7 @@
 
 	<h2>Rapide</h2>
 	<p>
-		Contresort est conçu pour être le plus proche possible du PHP natif. En outre l'architeture de ce dernier se veut la plus simple possible car nous avons essayé de limiter au maximum les couche d'abstraction inutiles. De ce fait les temps d'éxécution sont ultra rapides.
+		Contresort est conçu pour être le plus proche possible du PHP natif. En outre l'architeture de ce dernier se veut la plus simple possible car nous avons essayé de limiter au maximum les couches d'abstraction inutiles. De ce fait les temps d'éxécution sont ultra rapides.
 	</p>
 
 	<h2>Simple</h2>
