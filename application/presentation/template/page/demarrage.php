@@ -4,7 +4,7 @@
 	<h1><img src="resource/favicon.png"/> Démarrage rapide</h1>
 
 		<h2>Initialisation</h2>
-		<p>Une simple inclusion du fichier d'initialisation de Contresort est suffisant pour créer une nouvelle application</p>
+		<p>Une simple inclusion du fichier d'initialisation est suffisante pour utiliser Contresort</p>
 		<?php
 highlight_string('<?php
 require("contresort_filepathroot/contresort.php");
