@@ -10,10 +10,10 @@
 		</p>
 
 		<h2>Pourquoi Contresort est conçu pour pouvoir être abandonné facilement</h2>
-		<p>Parce que nous souhaitons que la seule et unique raison qui vous pousse à garder Contresort soit que ce dernier vous donne entière satisfaction. Nous voulons absolument éviter que vous soyez prisonnier d'une technologie qui après coup ne vous convient pas totalement.</p>
+		<p>Parce que nous souhaitons que la seule et unique raison qui vous pousse à garder Contresort soit que ce dernier vous donne entière satisfaction. Nous voulons absolument éviter que vous soyez prisonnier d'une technologie qui après coup ne vous conviendrait pas totalement.</p>
 
 		<h2>KISS avant tout</h2>
-		<p>Tous les choix d'implémentation de Contresort sont réalisés avec pour objectif de rester le plus simple possible. La simplicité offre une courbe d'apprentissage rapide, une maintenance aisée et des possibilités d'évolutions non bridés par des contraintes techniques. Nous voulons que les développeurs passent plus de temps à réfléchir à comment améliorer leurs produits plutôt qu'à se demander comment contourner des choix que nous aurions pu faire qui ne leur conviennent pas.
+		<p>Tous les choix d'implémentation de Contresort sont réalisés avec pour objectif de rester le plus simple possible. La simplicité offre une courbe d'apprentissage rapide, une maintenance aisée et des possibilités d'évolutions non bridés par des contraintes techniques. Nous voulons que les développeurs passent plus de temps à réfléchir à comment améliorer leurs produits plutôt qu'à se demander comment contourner des choix que nous aurions pu faire et qui ne leurs conviennent pas.
 		</p>
 
 		<h2>Le développeur est le chef d'orchestre, pas le framework</h2>

@@ -101,5 +101,6 @@ echo $application->getOutput();
 
 
 $application->stop();
+exit($application->getStatus());
 
 

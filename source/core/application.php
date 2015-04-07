@@ -185,7 +185,7 @@ class Application extends Extension
 
 	public function stop() {
 		$this->executeStack($this->exitActions);
-		exit($this->getStatus());
+		return $this;
 	}
 
 

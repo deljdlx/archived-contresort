@@ -43,7 +43,7 @@
 	</p>
 	<h2>Pourquoi ne pas utiliser Contresort</h2>
 	<p>
-		Contresort répond à des besoins spécifiques mais n'est bien sûr pas adapté à tout les développeurs. C'est pour cette raison qu'il a été conçu pour pouvoir êtr abandonné facilement pour une autre solution. Cependant afin de vous faire gagner du temps voici quelques raisons pour lesquelles vous ne devriez pas choisir Contresort : <ul>
+		Contresort répond à des besoins spécifiques mais n'est bien sûr pas adapté à tout les développeurs. C'est pour cette raison qu'il a été conçu pour pouvoir êtrr abandonné facilement pour une autre solution. Cependant afin de vous faire gagner du temps voici quelques raisons pour lesquelles vous ne devriez pas choisir Contresort : <ul>
 		<li>Vous préfèrez configurer plutôt que coder</li>
 		<li>En cas de doute, vous choisirez <a href="http://fr.wikipedia.org/wiki/SOLID_(informatique)">SOLID</a> plutôt que <a href="http://fr.wikipedia.org/wiki/Principe_KISS">KISS</a></li>
 		<li>Vous concevez votre code en fonction de design pattern plutôt qu'utilisez ces derniers en fonction de vos besoins immédiats</li>
