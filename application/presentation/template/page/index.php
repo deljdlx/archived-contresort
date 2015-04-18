@@ -25,7 +25,7 @@
 
 	<h2>Extensible</h2>
 	<p>
-		Le coeur de Contresort est minimaliste, mais a par contre été conçu pour être facilement extensible. Vous avez besoin d'une fonctionnalité particulière ? Jettez alors un coup d'oeil du coté des extensions, il est possible que vous y trouviez votre bonheur. Sinon créez votre propre extension, c'est simple et rapide !
+		Le coeur de Contresort est minimaliste, mais a par contre été conçu pour être facilement extensible. Vous avez besoin d'une fonctionnalité particulière ? Jetez alors un coup d'oeil du coté des extensions, il est possible que vous y trouviez votre bonheur. Sinon créez votre propre extension, c'est simple et rapide !
 	</p>
 
 </div>
