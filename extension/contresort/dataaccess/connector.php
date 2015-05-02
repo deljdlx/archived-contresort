@@ -9,11 +9,14 @@ class Connector
 
 	public function __construct($driverName, $parameters=array()) {
 		$className='\Contresort\DataAccess\Driver\\'.$driverName;
-		$this->driver=new $className();
-
-		$bindedParameters=bindParameters($parameters, $this->driver, 'initialize');
-
-		call_user_func_array(array($this->driver, 'initialize'), $bindedParameters);
+		if(class_exists($className)) {
+			$constructor=new \ReflectionClass($className);
+			$this->driver =$constructor->newInstanceArgs($parameters);
+			if(method_exists($this->driver, 'initialize')) {
+				$bindedParameters = bindParameters($parameters, $this->driver, 'initialize');
+				call_user_func_array(array($this->driver, 'initialize'), $bindedParameters);
+			}
+		}
 	}
 
 

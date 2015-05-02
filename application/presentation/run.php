@@ -1,12 +1,11 @@
 <?php
 
 
-define('CALL_FILEPATH', getcwd());
-chdir(__DIR__);
-define('APPLICATION_FILEPATH', __DIR__);
-define('CONTRESORT_FILEPATH', realpath(__DIR__.'/../../source'));
 
-require(CONTRESORT_FILEPATH.'/contresort.php');
+chdir(__DIR__);
+
+
+require(realpath(__DIR__.'/../../source').'/contresort.php');
 
 error_reporting(E_ALL);
 

@@ -4,13 +4,6 @@ namespace Contresort\DataAccess\Driver;
 
 class MySQLi extends \MySQLI
 {
-	public function initialize($host, $user, $password='', $database=null, $port=3306) {
-		$this->connect($host, $user, $password, $database, $port);
-		return $this;
-	}
-
-
-
 
 	public function queryAndFetch($query) {
 		$statement=$this->query($query);
