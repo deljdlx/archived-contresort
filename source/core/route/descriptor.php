@@ -2,7 +2,6 @@
 
 namespace Contresort\Route;
 
-use Contresort\Environment;
 
 class Descriptor
 {
@@ -17,6 +16,11 @@ class Descriptor
 	protected $selected=false;
 
 	protected $builder;
+
+
+	/**
+	 * @param \Contresort\Route\Rule $rule
+	 */
 
 	public function __construct($rule) {
 		$this->rule=$rule;
@@ -82,6 +86,10 @@ class Descriptor
 	}
 
 
+	/**
+	 * @param \Contresort\Application $application
+	 * @return $this
+	 */
 	public function isValid($application) {
 		if($this->rule->validate($application)) {
 			return true;
@@ -91,6 +99,11 @@ class Descriptor
 		}
 	}
 
+
+	/**
+	 * @param \Contresort\Application $application
+	 * @return $this
+	 */
 	public function run($application) {
 		$parameters=$this->rule->getParameters();
 		foreach ($this->actions as $action) {
@@ -103,6 +116,10 @@ class Descriptor
 		return $this;
 	}
 
+	/**
+	 * @param \Contresort\Application $application
+	 * @return $this
+	 */
 	public function runAfter($application) {
 		$parameters=$this->rule->getParameters();
 		foreach ($this->postActions as $action) {
@@ -115,6 +132,10 @@ class Descriptor
 		return $this;
 	}
 
+	/**
+	 * @param \Contresort\Application $application
+	 * @return $this
+	 */
 	public function runBefore($application) {
 
 		foreach ($this->preActions as $action) {

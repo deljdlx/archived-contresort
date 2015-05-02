@@ -49,18 +49,22 @@ class Environment
 
 	public function setURL($url) {
 		$this->url=$url;
+		return $this;
 	}
 
 	public function setGetVariables(array $get) {
 		$this->get=$get;
+		return $this;
 	}
 
 	public function setPostVariables(array $post) {
 		$this->post=$post;
+		return $this;
 	}
 
 	public function setSessionVariables(array $session) {
 		$this->session=$session;
+		return $this;
 	}
 
 
