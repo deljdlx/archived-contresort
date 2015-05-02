@@ -54,6 +54,9 @@ class Application extends Extension
 	}
 
 
+	/**
+	 * @return \Contresort\Environment
+	 */
 	public function getEnvironment() {
 		return $this->environment;
 	}

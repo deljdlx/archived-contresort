@@ -47,6 +47,25 @@ class Environment
 		}
 	}
 
+	public function setURL($url) {
+		$this->url=$url;
+	}
+
+	public function setGetVariables(array $get) {
+		$this->get=$get;
+	}
+
+	public function setPostVariables(array $post) {
+		$this->post=$post;
+	}
+
+	public function setSessionVariables(array $session) {
+		$this->session=$session;
+	}
+
+
+
+
 	public function loadRequest($request=null) {
 		if(!$request) {
 			$this->request=new Request();

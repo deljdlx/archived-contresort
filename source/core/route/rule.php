@@ -24,6 +24,10 @@ class Rule
 		return $this->method;
 	}
 
+
+	/**
+	 * @param \Contresort\Application $application
+	 */
 	public function validate($application) {
 
 		$environment=$application->getEnvironment();
