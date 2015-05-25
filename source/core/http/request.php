@@ -1,5 +1,5 @@
 <?php
-namespace Contresort;
+namespace Contresort\HTTP;
 
 class Request
 {

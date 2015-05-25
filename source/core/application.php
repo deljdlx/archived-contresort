@@ -17,7 +17,6 @@ class Application extends Extension
 
 	protected $output='';
 
-	protected $environment;
 	protected $status=0;
 
 	protected $headers=array();
@@ -27,21 +26,47 @@ class Application extends Extension
 	protected $preActions=array();
 
 
+	protected $environment=null;
+	protected $HTTPResponseDriver=null;
+
+	protected $requestMethod;
+
+
+
 	public function __construct($namespace, $filepath=null) {
 		if($filepath===null) {
 			$filepath=$this->findFilepathRoot();
 		}
 		parent::__construct($namespace, $filepath);
-		$this->loadEnvironment();
 
+		$this->loadEnvironment();
+		$this->requestMethod=$this->getEnvironment()->getMethod();
+
+		if($this->requestMethod!='cli') {
+			$this->setHTTPResponseDriver();
+		}
 
 		$this->addPostAction(function() {
-			if($this->getEnvironment()->getMethod()!='cli') {
+			if($this->requestMethod!='cli') {
 				$this->sendHeaders();
 			}
 		});
-
 	}
+
+
+	public function setHTTPResponseDriver($driver='\Contresort\HTTP\Response') {
+		if($driver) {
+			$this->HTTPResponseDriver=null;
+		}
+		else if(class_exists($driver)) {
+			$this->HTTPResponseDriver=new $driver;
+		}
+		return $this;
+	}
+
+
+
+
 
 	public function loadEnvironment($environment=null) {
 		if($environment===null) {
@@ -94,16 +119,28 @@ class Application extends Extension
 		return $descriptor;
 	}
 
-	public function get($validator) {
-		return $this->createRoute('get', $validator);
+	public function get($validator, $action=null) {
+		$routeDescriptor=$this->createRoute('get', $validator);
+		if($action) {
+			$this->addAction($action);
+		}
+		return $routeDescriptor;
 	}
 
-	public function post($validator) {
-		return $this->createRoute('post', $validator);
+	public function post($validator, $action=null) {
+		$routeDescriptor=$this->createRoute('post', $validator);
+		if($action) {
+			$this->addAction($action);
+		}
+		return $routeDescriptor;
 	}
 
-	public function cli($validator) {
-		return $this->createRoute('cli', $validator);
+	public function cli($validator, $action=null) {
+		$routeDescriptor=$this->createRoute('cli', $validator);
+		if($action) {
+			$this->addAction($action);
+		}
+		return $routeDescriptor;
 	}
 
 	public function mapRoutingRules() {
@@ -137,15 +174,25 @@ class Application extends Extension
 	public function run() {
 		$this->mapRoutingRules();
 
-		$this->executeStack($this->preActions);
+		if(!empty($this->preActions)) {
+			$this->executeStack($this->preActions);
+		}
+
 
 		foreach ($this->routingRules as $descriptor) {
 			$descriptor->runBefore($this);
 			if($descriptor->isValid($this)) {
 				$descriptor->selected(true);
 				$this->selectedRoute=$descriptor;
-				$descriptor->run($this);
-				break;
+
+				$routeDescriptor=$descriptor->run($this);
+
+				if($routeDescriptor!==false) { //route execution valid
+					if($this->requestMethod!='cli') {
+						$this->setHTTPCacheHeaders($routeDescriptor);
+					}
+					break;
+				}
 			}
 		}
 
@@ -153,7 +200,9 @@ class Application extends Extension
 			$this->selectedRoute->runAfter($this);
 		}
 
-		$this->executeStack($this->postActions);
+		if(!empty($this->postActions)) {
+			$this->executeStack($this->postActions);
+		}
 
 		return $this;
 	}
@@ -171,19 +220,73 @@ class Application extends Extension
 		return $this;
 	}
 
+	/**
+	 * @param \Contresort\Route\Descriptor $routeDescriptor
+	 */
+	public function setHTTPCacheHeaders($routeDescriptor) {
+		//here we go, true cache control algo
+
+		if($routeDescriptor->noStore()) {
+			$this->addHeader('Cache-control', 'no-store, no-cache, must-revalidate');
+			return $this;
+		}
+
+		$cacheControlName='Cache-control';
+		$cacheControlValue='';
+		if($routeDescriptor->noCache()) {
+			$cacheControlValue='no-cache, ';
+		}
+		if($routeDescriptor->cacheVisibility()=='public') {
+			$cacheControlValue='public, ';
+		}
+		else {
+			$cacheControlValue='private, ';
+		}
+
+		//$this->addHeader('Last-Modified', gmdate("D, d M Y H:i:s", time()-30).' GMT');
+
+
+		if($date=$routeDescriptor->expires()) {
+			$this->addHeader('Expires', $date);
+		}
+
+		if($duration=$routeDescriptor->maxAge()) {
+			$cacheControlValue.='must-revalidate, max-age='.$duration;
+		}
+		else {
+			$cacheControlValue=substr($cacheControlValue, -2);
+		}
+
+		//$this->addHeader($cacheControlName, $cacheControlValue);
+
+
+
+
+		if($eTag=$routeDescriptor->eTag()) {
+			$this->addHeader('ETag', $eTag);
+		}
+
+		return $this;
+	}
+
+
+
 
 	public function addHeader($name, $value) {
 		$this->headers[$name]=$value;
 	}
 
 	public function sendHeaders() {
-		foreach ($this->headers as $name => $value) {
-			header($name.': '.$value);
+		if($this->HTTPResponseDriver) {
+			$this->HTTPResponseDriver->sendHeaders($this->headers);
+		}
+		else {
+			foreach ($this->headers as $name => $value) {
+				header($name.': '.$value);
+			}
 		}
 		return $this;
 	}
-
-
 
 
 	public function stop() {

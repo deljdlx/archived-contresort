@@ -18,6 +18,15 @@ class Descriptor
 	protected $builder;
 
 
+	protected $expires=null;
+	protected $maxAge=null;
+	protected $noStore=true;
+	protected $noCache=true;
+	protected $cacheVisibility='private';
+	protected $eTag=null;
+
+
+
 	/**
 	 * @param \Contresort\Route\Rule $rule
 	 */
@@ -109,11 +118,13 @@ class Descriptor
 		foreach ($this->actions as $action) {
 			$closure=$action->bindTo($application, $application);
 			$result=call_user_func_array(array($closure, '__invoke'), $parameters);
-			if(!$result) {
-				break;
+
+			if($result===true) {
+				return $this;
 			}
 		}
-		return $this;
+
+		return false;
 	}
 
 	/**
@@ -147,6 +158,87 @@ class Descriptor
 		}
 		return $this;
 	}
+
+
+	//cache control=========================================
+
+	public function noStore($noStore=null) {
+		if($noStore===null) {
+			return $this->noStore;
+		}
+
+		$this->noStore=$noStore;
+		return $this;
+	}
+
+	public function noCache($noCache=null) {
+		if($noCache===null) {
+			return $this->noCache;
+		}
+
+		if($noCache===false) {
+			$this->noStore(false);
+		}
+
+
+		$this->noCache=$noCache;
+		return $this;
+	}
+
+	public function expires($gmtDate=null) {
+		if($gmtDate===null) {
+			return $this->expires;
+		}
+
+		if($gmtDate) {
+			$this->noStore(false);
+		}
+
+
+		$this->expires=$gmtDate;
+		return $this;
+	}
+
+	public function cacheVisibility($visibility=null) {
+		if($visibility===null) {
+			return $this->cacheVisibility;
+		}
+
+		$this->cacheVisibility=$visibility;
+		return $this;
+	}
+
+	public function maxAge($second=null) {
+		if($second===null) {
+			return $this->maxAge;
+		}
+
+		if($second) {
+			$this->noStore(false);
+		}
+
+		$this->maxAge=$second;
+		return $this;
+	}
+
+	public function eTag($eTag=null) {
+		if($eTag===null) {
+			return $this->eTag;
+		}
+
+		if($eTag) {
+			$this->noStore(false);
+		}
+
+		$this->eTag=$eTag;
+		return $this;
+	}
+
+
+
+
+
+
 
 
 }

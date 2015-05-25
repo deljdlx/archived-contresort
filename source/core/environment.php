@@ -31,15 +31,8 @@ class Environment
 			$this->get=$_GET;
 			$this->cookie=$_COOKIE;
 
+			$this->loadURL();
 			$this->loadRequest();
-		}
-
-		if(isset($_SERVER)) {
-			if(isset($_SERVER['SERVER_PROTOCOL']) && isset($_SERVER['SERVER_NAME']) && isset($_SERVER['REQUEST_URI'])) {
-				$protocol = strtolower(preg_replace('`(.*?)/.*`', '$1', $_SERVER['SERVER_PROTOCOL']));
-				$this->url = $protocol . '://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
-				$this->uri=$_SERVER['REQUEST_URI'];
-			}
 		}
 
 		if(isset($_SESSION)) {
@@ -69,14 +62,33 @@ class Environment
 
 
 
+	public function loadURL($url=null) {
+		if($url) {
+			$data=parse_url($url);
+			$this->url=$url;
+			$this->uri=$data['path'].'?'.$data['query'];
+			return $this;
+		}
+		if(isset($_SERVER)) {
+			if(isset($_SERVER['SERVER_PROTOCOL']) && isset($_SERVER['SERVER_NAME']) && isset($_SERVER['REQUEST_URI'])) {
+				$protocol = strtolower(preg_replace('`(.*?)/.*`', '$1', $_SERVER['SERVER_PROTOCOL']));
+				$this->url = $protocol . '://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+				$this->uri=$_SERVER['REQUEST_URI'];
+			}
+		}
+		return $this;
+	}
+
 
 	public function loadRequest($request=null) {
 		if(!$request) {
-			$this->request=new Request();
+			$this->request=new HTTP\Request();
 		}
 		else {
-			$this->requestion=$request;
+			$this->request=$request;
 		}
+
+		return $this;
 	}
 
 	public function getRequest() {
