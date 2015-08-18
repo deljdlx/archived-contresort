@@ -9,8 +9,8 @@ class Extension
 	protected $filepath;
 
 	public function __construct($namespace, $filepath) {
-			$this->namespace=$namespace;
-			$this->filepath=$filepath;
+		$this->namespace=$namespace;
+		$this->filepath=$filepath;
 
 		spl_autoload_register(
 			array($this, 'autoload')

@@ -64,6 +64,18 @@ $application->get('`\?/manifeste`')->name('manifeste')
 	})
 ;
 
+
+
+/*
+$application->get('`\?/(documentation)`', function($test) {
+	print_r($test);
+	//$this->output=getPage('documentation.php', $this);
+	return true;
+});
+*/
+
+
+
 $application->get('`\?/documentation`')->name('documentation')
 	->addAction(function() {
 		$this->output=getPage('documentation.php', $this);
@@ -73,6 +85,7 @@ $application->get('`\?/documentation`')->name('documentation')
 		return '?/documentation';
 	})
 ;
+
 
 $application->get('`\?/extension`')->name('extension')
 	->addAction(function() {

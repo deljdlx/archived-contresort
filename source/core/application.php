@@ -46,6 +46,7 @@ class Application extends Extension
 			$this->setHTTPResponseDriver();
 		}
 
+
 		$this->addPostAction(function() {
 			if($this->requestMethod!='cli') {
 				$this->sendHeaders();
@@ -54,6 +55,7 @@ class Application extends Extension
 	}
 
 
+    //@todo
 	public function setHTTPResponseDriver($driver='\Contresort\HTTP\Response') {
 		if($driver) {
 			$this->HTTPResponseDriver=null;
@@ -122,7 +124,7 @@ class Application extends Extension
 	public function get($validator, $action=null) {
 		$routeDescriptor=$this->createRoute('get', $validator);
 		if($action) {
-			$this->addAction($action);
+			$routeDescriptor->addAction($action);
 		}
 		return $routeDescriptor;
 	}
@@ -130,7 +132,7 @@ class Application extends Extension
 	public function post($validator, $action=null) {
 		$routeDescriptor=$this->createRoute('post', $validator);
 		if($action) {
-			$this->addAction($action);
+			$routeDescriptor->addAction($action);
 		}
 		return $routeDescriptor;
 	}
@@ -138,7 +140,7 @@ class Application extends Extension
 	public function cli($validator, $action=null) {
 		$routeDescriptor=$this->createRoute('cli', $validator);
 		if($action) {
-			$this->addAction($action);
+			$routeDescriptor->addAction($action);
 		}
 		return $routeDescriptor;
 	}
@@ -327,9 +329,11 @@ class Application extends Extension
 	}
 
 
+
+
+
 	protected function findFilepathRoot($callstackSize=10) {
 		$applicationData=debug_backtrace($callstackSize);
-
 		$className=get_class($this);
 
 		foreach($applicationData as $key=>$data) {
